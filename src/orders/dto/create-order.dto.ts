@@ -41,9 +41,4 @@ export class CreateOrderDto {
     @ValidateNested()
     @Type(() => ShippingAddressDto)
     shippingAddress: ShippingAddressDto;
-
-    @ApiProperty({ example: 'pi_123456789', required: false, description: 'Stripe Payment/Intent ID' })
-    @IsString()
-    @IsOptional()
-    stripePaymentId?: string;
 }

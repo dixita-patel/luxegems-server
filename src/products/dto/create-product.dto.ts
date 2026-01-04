@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsNumber, IsString, IsOptional } from 'class-validator';
+import { IsBoolean, IsString, IsOptional, IsNumber } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
 
 export class CreateProductDto {
     @ApiProperty({ example: 'Diamond Eternity Ring', description: 'Product name' })
@@ -11,6 +12,7 @@ export class CreateProductDto {
     description: string;
 
     @ApiProperty({ example: 2499.99, description: 'Product price' })
+    @Transform(({ value }) => parseFloat(value))
     @IsNumber()
     price: number;
 
@@ -18,17 +20,18 @@ export class CreateProductDto {
     @IsString()
     category: string;
 
-    @ApiProperty({ example: 'https://example.com/image.jpg', description: 'Product image URL' })
-    @IsString()
-    image: string;
+    @ApiProperty({ type: 'string', format: 'binary', description: 'Product image file' })
+    image: any;
 
     @ApiProperty({ example: true, required: false, description: 'Is product in stock?' })
-    @IsBoolean()
     @IsOptional()
+    @Transform(({ value }) => value === 'true' || value === true)
+    @IsBoolean()
     inStock?: boolean;
 
     @ApiProperty({ example: false, required: false, description: 'Is product featured?' })
-    @IsBoolean()
     @IsOptional()
+    @Transform(({ value }) => value === 'true' || value === true)
+    @IsBoolean()
     featured?: boolean;
 }

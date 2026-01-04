@@ -40,6 +40,7 @@ export class AuthResponseDto {
             name: 'John Doe',
             email: 'user@example.com',
             role: 'user',
+            isAdminUser: false,
             profilePicture: 'uploads/file.jpg'
         }
     })
