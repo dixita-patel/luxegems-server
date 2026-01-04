@@ -34,4 +34,15 @@ export class ProductsService {
         const newProduct = this.productsRepository.create(product);
         return this.productsRepository.save(newProduct);
     }
+
+    async update(id: string, updateData: Partial<Product>): Promise<Product> {
+        const product = await this.findOne(id);
+        Object.assign(product, updateData);
+        return this.productsRepository.save(product);
+    }
+
+    async remove(id: string): Promise<void> {
+        const product = await this.findOne(id);
+        await this.productsRepository.remove(product);
+    }
 }

@@ -12,13 +12,19 @@ export class PaymentService {
         });
     }
 
-    async createPaymentIntent(amount: number, currency: string = 'usd') {
+    async createPaymentIntent(amount: number, currency: string = 'usd', metadata: any = {}) {
         return this.stripe.paymentIntents.create({
             amount: Math.round(amount * 100), // convert to cents
             currency,
+            metadata,
             automatic_payment_methods: {
                 enabled: true,
             },
         });
+    }
+
+    constructEvent(payload: Buffer, signature: string) {
+        const secret = this.configService.get<string>('STRIPE_WEBHOOK_SECRET');
+        return this.stripe.webhooks.constructEvent(payload, signature, secret);
     }
 }

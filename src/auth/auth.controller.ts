@@ -14,7 +14,7 @@ export class AuthController {
     ) { }
 
     @Post('login')
-    @ApiOperation({ summary: 'Login user' })
+    @ApiOperation({ summary: 'Login standard user' })
     @ApiResponse({ status: 200, description: 'Login successful', type: AuthResponseDto })
     @ApiResponse({ status: 401, description: 'Unauthorized' })
     @ApiBody({ type: LoginDto })
@@ -22,6 +22,25 @@ export class AuthController {
         const user = await this.authService.validateUser(loginDto.email, loginDto.password);
         if (!user) {
             throw new BadRequestException('Invalid credentials');
+        }
+        if (user.isAdminUser) {
+            throw new BadRequestException('Admin users cannot login on the user side');
+        }
+        return this.authService.login(user);
+    }
+
+    @Post('admin/login')
+    @ApiOperation({ summary: 'Login admin user' })
+    @ApiResponse({ status: 200, description: 'Login successful', type: AuthResponseDto })
+    @ApiResponse({ status: 401, description: 'Unauthorized' })
+    @ApiBody({ type: LoginDto })
+    async adminLogin(@Body() loginDto: LoginDto) {
+        const user = await this.authService.validateUser(loginDto.email, loginDto.password);
+        if (!user) {
+            throw new BadRequestException('Invalid credentials');
+        }
+        if (!user.isAdminUser) {
+            throw new BadRequestException('Regular users cannot login on the admin side');
         }
         return this.authService.login(user);
     }
